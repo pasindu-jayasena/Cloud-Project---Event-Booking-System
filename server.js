@@ -2,7 +2,7 @@ const app = require('./src/app');
 const { pool } = require('./src/config/db');
 const { startConsumer } = require('./src/services/queueConsumer');
 
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5001;
 
 // Start the Express server
 app.listen(PORT, async () => {

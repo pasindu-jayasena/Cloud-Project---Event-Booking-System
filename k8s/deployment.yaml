@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-service-deployment
+  labels:
+    app: booking-service
+spec:
+  replicas: 2 # Number of pod instances running
+  selector:
+    matchLabels:
+      app: booking-service
+  template:
+    metadata:
+      labels:
+        app: booking-service
+    spec:
+      containers:
+      - name: booking-service
+        # UPDATE THIS LINE when you push your image to a registry (e.g., your-acr.azurecr.io/booking-service:latest)
+        image: eventregistryhiran01.azurecr.io/booking-service:v1 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5001
+        env:
+        - name: PORT
+          value: "5001"
+        # Database Environment Variables (Use Kubernetes Secrets in production!)
+        - name: DB_HOST
+          value: "booking-postgres-pasindu.postgres.database.azure.com"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "booking_service_db"
+        - name: DB_USER
+          value: "dbadmin"
+        - name: DB_PASSWORD
+          value: "P@ssw0rd12345!"
+        - name: DB_SSL
+          value: "true"
+        # Other Services (Update with Event/User service Kubernetes ClusterIP URLs)
+        - name: EVENT_SERVICE_BASE_URL
+          value: "http://event-service:5001"
+        - name: USER_SERVICE_BASE_URL
+          value: "http://user-service:5000"
+        # Azure Service Bus
+        - name: SERVICE_BUS_CONNECTION_STRING
+          value: "Endpoint=sb://your-sb-namespace.servicebus.windows.net/;SharedAccessKeyName=...;SharedAccessKey=..."
+        - name: PAYMENT_REQUEST_QUEUE_NAME
+          value: "booking-payment-request-queue"
+        - name: PAYMENT_RESULT_QUEUE_NAME
+          value: "payment-result-queue"
+        - name: BOOKING_CONFIRMED_QUEUE_NAME
+          value: "booking-confirmed-queue"
+        - name: BOOKING_EXPIRY_MINUTES
+          value: "10"
+        # Health checks to ensure the container is running properly
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5001
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5001
+          initialDelaySeconds: 15
+          periodSeconds: 10
