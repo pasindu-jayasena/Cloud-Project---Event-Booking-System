@@ -7,7 +7,7 @@ metadata:
 spec:
   # Use LoadBalancer to expose externally in Azure (AKS). 
   # Use ClusterIP if you only want it accessible inside the cluster (e.g. via an API Gateway)
-  type: LoadBalancer 
+  type: ClusterIP
   selector:
     app: booking-service
   ports:

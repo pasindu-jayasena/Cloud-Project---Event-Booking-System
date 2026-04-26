@@ -34,17 +34,23 @@ spec:
         - name: DB_USER
           value: "dbadmin"
         - name: DB_PASSWORD
-          value: "P@ssw0rd12345!"
+          valueFrom:
+            secretKeyRef:
+              name: booking-service-secrets
+              key: DB_PASSWORD
         - name: DB_SSL
           value: "true"
         # Other Services (Update with Event/User service Kubernetes ClusterIP URLs)
         - name: EVENT_SERVICE_BASE_URL
-          value: "http://event-service:5001"
+          value: "http://event-service:5002"
         - name: USER_SERVICE_BASE_URL
-          value: "http://user-service:5000"
+          value: "http://user-service:80"
         # Azure Service Bus
         - name: SERVICE_BUS_CONNECTION_STRING
-          value: "Endpoint=sb://your-sb-namespace.servicebus.windows.net/;SharedAccessKeyName=...;SharedAccessKey=..."
+          valueFrom:
+            secretKeyRef:
+              name: booking-service-secrets
+              key: SERVICE_BUS_CONNECTION_STRING
         - name: PAYMENT_REQUEST_QUEUE_NAME
           value: "booking-payment-request-queue"
         - name: PAYMENT_RESULT_QUEUE_NAME

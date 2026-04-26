@@ -3,6 +3,7 @@ node_modules/
 
 # Environment variables
 .env
+k8s/secrets.yaml
 
 # Logs
 logs/
