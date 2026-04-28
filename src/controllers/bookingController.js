@@ -2,6 +2,7 @@ const { query, getClient } = require('../config/db');
 const { validateBookingRequest, validateReservationRequest, validateStatusUpdate, validateId } = require('../utils/validators');
 const { checkTicketAvailability } = require('../services/eventServiceClient');
 const { sendPaymentRequest } = require('../services/queueProducer');
+const { publishBookingCreated } = require("../services/rabbitMqProducer");
 
 // POST /api/bookings — Create a new booking
 const createBooking = async (req, res, next) => {
@@ -75,6 +76,16 @@ const createBooking = async (req, res, next) => {
           totalAmount,
           items: insertedItems
         });
+
+        try {
+          await publishBookingCreated({
+            bookingId: booking.id,
+            userId,
+            items: insertedItems,
+          });
+        } catch (rabbitErr) {
+          console.error("[Booking] Failed to publish booking.created:", rabbitErr.message);
+        }
       } catch (queueErr) {
         console.error('[Booking] Failed to send payment request to queue:', queueErr.message);
       }
