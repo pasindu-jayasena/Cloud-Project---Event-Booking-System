@@ -17,7 +17,7 @@ spec:
       containers:
       - name: booking-service
         # UPDATE THIS LINE when you push your image to a registry (e.g., your-acr.azurecr.io/booking-service:latest)
-        image: eventregistryhiran01.azurecr.io/booking-service:v1 
+        image: eventregistryhiran01.azurecr.io/booking-service:v2 
         imagePullPolicy: Always
         ports:
         - containerPort: 5001
